@@ -29,6 +29,8 @@ public class Task {
     }
 
     public void setExecutionTime(int executionTime) {
+        if ((getExecutionTime()-1)==0)
+            setFinished(true);
         this.executionTime = executionTime;
     }
 
