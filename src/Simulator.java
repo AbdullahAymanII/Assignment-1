@@ -7,7 +7,6 @@ public class Simulator {
     private Clock[] cycles;
     private Processor[] processors;
 
-    private ArrayList<Task> tasks;
     private Schedular schedular;
 
     public Simulator(int numberOfProcessors, int numberOfClockCycles, String path) {
@@ -22,18 +21,23 @@ public class Simulator {
             this.numberOfProcessors = numberOfProcessors;
             this.numberOfClockCycles = numberOfClockCycles;
             this.path = path;
-
-            for (int i = 0; i < numberOfClockCycles; i++) {
+            processors=new Processor[numberOfProcessors];
+            cycles=new Clock[numberOfClockCycles];
+            for (int i = 1; i <= numberOfClockCycles; i++) {
                 this.cycles[i]=new Clock(i);
             }
 
-            for (int i = 0; i < numberOfProcessors; i++) {
+            for (int i = 1; i <= numberOfProcessors; i++) {
                 processors[i]=new Processor(i);
             }
+            this.schedular=new Schedular(path,processors,cycles);
 
         }
         catch(Exception e) {
             System.out.println("Simulator Error!!!");
         }
+    }
+    public void run(){
+        schedular.tasksSchedule();
     }
 }

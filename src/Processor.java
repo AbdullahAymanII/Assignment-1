@@ -1,14 +1,15 @@
 public class Processor {
-    private int pid;
+    private int processorId;
+    private boolean finished = true;
     Task task;
     Clock clockCycle;
 
-    public Processor(int pid) {
-        this.pid = pid;
+    public Processor(int processorId) {
+        this.processorId = processorId;
     }
 
-    public int getPid() {
-        return pid;
+    public int getProcessorId() {
+        return processorId;
     }
 
     public Task getTask() {
@@ -16,14 +17,25 @@ public class Processor {
     }
 
     public void setTask(Task task) {
-        this.task = task;
+        if (finished) {
+            this.task = task; // set a new task
+            setFinished(false);
+        }
     }
-
-    public Clock getClockCycle() {
+    public Clock getClockCycle () {
         return clockCycle;
     }
 
-    public void setClockCycle(Clock clockCycle) {
+    public void setClockCycle (Clock clockCycle){
         this.clockCycle = clockCycle;
     }
+
+    public boolean isFinished () {
+        return finished;
+    }
+
+    public void setFinished ( boolean finished){
+        this.finished = finished;
+    }
+
 }

@@ -1,16 +1,16 @@
 public class Clock {
-    private int cid;
+    private int clockId;
     private final static int CYCLEDURATION=1;
 
-    public Clock(int cid) {
-        this.cid = cid;
+    public Clock(int clockId) {
+        this.clockId = clockId;
     }
 
-    public int getCid() {
-        return cid;
+    public int getClockId() {
+        return clockId;
     }
 
-    public void setCid(int cid) {
-        this.cid = cid;
+    public void setClockId(int clockId) {
+        this.clockId = clockId;
     }
 }
