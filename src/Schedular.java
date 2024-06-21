@@ -1,120 +1,6 @@
-//import javax.swing.*;
-//import java.util.ArrayList;
-//import java.util.PriorityQueue;
-//import java.io.*;
-//
-//public class Schedular {
-//    private ArrayList<Task> tasks;
-//    private Processor[] processors;
-//    private Clock[] cycles;
-//    private String path;
-//    private ArrayList<Task> completedTasks;
-//    private JFrame frame;
-//    private JPanel mainPanel;
-//
-//    public Schedular(String path, Processor[] processors, Clock[] cycles) {
-//        this.path = path;
-//        this.processors = processors;
-//        this.cycles = cycles;
-//        this.tasks = new ArrayList<>();
-//        this.completedTasks = new ArrayList<>();
-//
-//        loadTasksFromFile();
-//
-//        frame = new JFrame("Processor Execution Simulator");
-//        frame.setSize(800, 600);
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//
-//        mainPanel = new JPanel();
-//        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-//
-//        frame.add(new JScrollPane(mainPanel));
-//        frame.setVisible(true);
-//    }
-//
-//    private void loadTasksFromFile() {
-//        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-//            String line = br.readLine();
-//            if (line != null) {
-//                int numberOfTasks = Integer.parseInt(line);
-//
-//                int taskId = 1;
-//                while ((line = br.readLine()) != null) {
-//                    String[] parts = line.split("\\s+");
-//                    if (parts.length == 3) {
-//                        int creationTime = Integer.parseInt(parts[0]);
-//                        int executionTime = Integer.parseInt(parts[1]);
-//                        boolean priority = Integer.parseInt(parts[2]) == 1;
-//
-//                        tasks.add(new Task(taskId++, creationTime, executionTime, priority));
-//                    }
-//                }
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    public void tasksSchedule() {
-//        for (int currentCycle = 1; currentCycle <= cycles.length; currentCycle++) {
-//            updateTasks(currentCycle);
-//            updateProcessors();
-//            updateGUI(currentCycle);
-//
-//            try {
-//                Thread.sleep(1000); // Delay for 1 second
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-//
-//    private void updateTasks(int currentCycle) {
-//        for (Task task : tasks) {
-//            if (task.getCreationTime() == currentCycle) {
-//                for (Processor processor : processors) {
-//                    if (processor.isFinished()) {
-//                        processor.setTask(task);
-//                        break;
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    private void updateProcessors() {
-//        for (Processor processor : processors) {
-//            Task task = processor.getTask();
-//            if (task != null) {
-//                task.setExecutionTime(task.getExecutionTime() - 1);
-//                if (task.getExecutionTime() == 0) {
-//                    processor.setFinished(true);
-//                    completedTasks.add(task);
-//                }
-//            }
-//        }
-//    }
-//
-//    private void updateGUI(int currentCycle) {
-//        CyclePanel cyclePanel = new CyclePanel(currentCycle, processors, completedTasks);
-//        mainPanel.add(cyclePanel);
-//        frame.revalidate();
-//        frame.repaint();
-//    }
-//}
-//
-//
-//
-
-
-
-
-
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
-import java.util.Comparator;
 
 public class Schedular {
     private ArrayList<Task> tasks;
@@ -122,6 +8,7 @@ public class Schedular {
     private Processor[] processors;
     private Clock[] cycles;
     private String path;
+    private int numberOfTasks;
 
     public Schedular(String path, Processor[] processors, Clock[] cycles) {
         this.path = path;
@@ -135,13 +22,14 @@ public class Schedular {
 
     private void loadTasksFromFile() {
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            int countNumberOfTasks=0;
             String line = br.readLine();
             if (line != null) {
-                int numberOfTasks = Integer.parseInt(line);
-                System.out.println("Number of tasks: " + numberOfTasks);
+                numberOfTasks = Integer.parseInt(line);
 
                 int taskId = 1;
                 while ((line = br.readLine()) != null) {
+                    countNumberOfTasks++;
                     String[] parts = line.split("\\s+");
                     if (parts.length == 3) {
                         try {
@@ -158,48 +46,82 @@ public class Schedular {
                         System.err.println("Line format is incorrect: " + line);
                     }
                 }
+
+                try {
+                    if (countNumberOfTasks != numberOfTasks)
+                        throw new Exception("Invalid Number of Tasks!!");
+                } catch (Exception e){
+                    System.out.println(e.getMessage());
+                    System.exit(0);
+                }
+
             } else {
                 System.err.println("The file is empty.");
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + path);
             e.printStackTrace();
+            System.exit(0);
         }
     }
 
     public void tasksSchedule() {
+        System.out.println("================================ Simulation Start ================================");
+        System.out.println("Simulator Information: ");
+        System.out.println("Number of Processors: "+processors.length);
+        System.out.println("Number of Cycles: "+cycles.length);
+        System.out.println("Number of tasks: " + numberOfTasks);
         for (int currentCycle = 1; currentCycle <= cycles.length; currentCycle++) {
-            System.out.println("Cycle " + currentCycle);
+            System.out.println("================================================================================");
+            System.out.println("                                  Cycle " + currentCycle);
+            System.out.println("================================================================================\n");
 
-            // Add new tasks to the priority queue
+            System.out.println("Task/Tasks created: ");
+            // Add/queue Tasks arrived into PriorityQueue and Print tasks created in the current cycle
             for (Task task : tasks) {
                 if (task.getCreationTime() == currentCycle) {
+                    System.out.println(task);
                     priorityQueue.add(task);
-                    System.out.println("Task created: " + task);
                 }
             }
+            System.out.println();
 
             // Assign tasks to available processors
             for (Processor processor : processors) {
                 if (processor.isFinished() && !priorityQueue.isEmpty()) {
                     Task task = priorityQueue.poll();
                     processor.setTask(task);
-                    System.out.println("Assigned " + task + " to " + processor);
                 }
             }
+            printCurrentProcessorsInformation();
+            System.out.println();
 
-            // Update processor states
+            System.out.println("Task/Tasks completed: ");
+            // Execute tasks on processors and check for completion
             for (Processor processor : processors) {
                 Task task = processor.getTask();
                 if (task != null) {
                     task.setExecutionTime(task.getExecutionTime() - 1);
                     if (task.getExecutionTime() == 0) {
                         processor.setFinished(true);
-                        System.out.println("Task completed: " + task);
+                        System.out.println(task);
                     }
                 }
             }
+            System.out.println();
 
+        }
+        System.out.println();
+        System.out.println("=============================== Simulation End =================================");
+    }
+
+    private void printCurrentProcessorsInformation(){
+        System.out.println("Processors States: ");
+        for(Processor processor:processors){
+            if(processor.isFinished())
+                System.out.println("Processor-"+processor.getProcessorId()+": Idle");
+            else
+                System.out.println("Processor-"+processor.getProcessorId()+": Task-"+processor.getTask().getTaskId()+", The Remaining Excution Time is "+processor.getTask().getExecutionTime());
         }
     }
 

@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 public class Simulator {
     private int numberOfProcessors;
     private int numberOfClockCycles;
@@ -31,6 +29,7 @@ public class Simulator {
             this.schedular = new Schedular(path, processors, cycles);
         } catch (Exception e) {
             System.out.println("Simulator Error: " + e.getMessage());
+            System.exit(0);
         }
     }
 

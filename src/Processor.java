@@ -2,10 +2,17 @@ public class Processor {
     private int processorId;
     private boolean finished = true;
     private Task task;
-    private Clock clockCycle;
 
     public Processor(int processorId) {
+        try{
+            if(processorId <= 0)
+                throw new Exception("Invalid Processor ID");
         this.processorId = processorId;
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+            System.exit(0);
+        }
     }
 
     public int getProcessorId() {
@@ -23,13 +30,6 @@ public class Processor {
         }
     }
 
-    public Clock getClockCycle() {
-        return clockCycle;
-    }
-
-    public void setClockCycle(Clock clockCycle) {
-        this.clockCycle = clockCycle;
-    }
 
     public boolean isFinished() {
         return finished;
