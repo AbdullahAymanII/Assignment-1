@@ -60,10 +60,15 @@ public class Simulator {
                             int executionTime = Integer.parseInt(parts[1]);
                             boolean priority = Integer.parseInt(parts[2]) == 1;
 
+                            if(creationTime<=0 || executionTime<=0 ){
+                                throw new NumberFormatException();
+                            }
+
                             tasks.add(new Task(taskId++, creationTime, executionTime, priority));
-                        } catch (NumberFormatException e) {
+                        } catch (Exception e) {
                             System.err.println("Error parsing line: " + line);
                             System.err.println("Invalid format: " + e.getMessage());
+                            System.exit(0);
                         }
                     } else {
                         System.err.println("Line format is incorrect: " + line);
@@ -80,6 +85,7 @@ public class Simulator {
 
             } else {
                 System.err.println("The file is empty.");
+                System.exit(0);
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + path);
